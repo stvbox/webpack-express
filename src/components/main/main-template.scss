@@ -1,0 +1,13 @@
+.main-template {
+    display: flex;
+
+    .main-template__menu {
+        flex: 0 0 150px;
+        /*border: 1px red solid;*/
+    }
+
+    .main-template__content {
+        flex: 1 1 100%;
+        /*border: 1px blue solid;*/
+    }
+}

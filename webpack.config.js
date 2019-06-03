@@ -2,8 +2,6 @@ const webpack = require('webpack');
 const path = require('path');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-
-
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 
 module.exports = {
@@ -14,9 +12,13 @@ module.exports = {
 	plugins: [
 		new CleanWebpackPlugin(),
 		new HtmlWebpackPlugin({
-			title: 'Output Management'
+			title: 'Output Management',
+			template: './src/index.html',
 		})
 	],
+	resolve: {
+		extensions: ['.ts', '.tsx', '.js', 'less', 'css', 'scss', '.json']
+	},
 	module: {
 		rules: [
 			{
@@ -41,8 +43,31 @@ module.exports = {
 				exclude: /node_modules/
 			},
 			{
-				test: /\.(less|css)$/,
-				use: [
+				test: /\.(scss)$/,
+				use: [{
+					loader: 'style-loader', // inject CSS to page
+				}, {
+					loader: 'css-loader', // translates CSS into CommonJS modules
+				}, {
+					loader: 'postcss-loader', // Run post css actions
+					options: {
+						plugins: function () { // post css plugins, can be exported to postcss.config.js
+							return [
+								require('precss'),
+								require('autoprefixer')
+							];
+						}
+					}
+				}, {
+					loader: 'sass-loader' // compiles Sass to CSS
+				}]
+			}
+
+
+
+			/*{
+				test: /\.(scss|less|css)$/,
+				use: ['style-loader',
 					{
 						loader: 'css-loader',
 						options: {
@@ -54,9 +79,23 @@ module.exports = {
 						options: {
 							sourceMap: true
 						}
+					},
+					{
+						loader: 'postcss-loader', // Run post css actions
+						options: {
+							plugins: function () { // post css plugins, can be exported to postcss.config.js
+								return [
+									require('precss'),
+									require('autoprefixer')
+								];
+							}
+						}
+					},
+					{
+						loader: 'sass-loader' // compiles Sass to CSS
 					}
 				]
-			}
+			}*/
 		]
 	},
 	output: {
@@ -72,7 +111,6 @@ module.exports = {
 					test: /[\\/]node_modules[\\/]/
 				}
 			},
-
 			chunks: 'async',
 			minChunks: 1,
 			minSize: 30000,
